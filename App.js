@@ -90,81 +90,83 @@ const TimetableScreen = () => {
 
   const [selectedDay, setSelectedDay] = useState(getCurrentDayIndex());
 
+  // Ensure no stray text exists directly within any <View> tags
   return (
+    // Use screenContainer to center the timetableWrapper vertically
     <View style={styles.screenContainer}>
-      {/* --- Header Row --- */}
-      <View style={styles.timetableHeaderContainer}>
-        {/* Top-Left Empty Corner (aligns with time column) */}
-        <View style={styles.topLeftCorner} />
-
-        {/* Header for selecting the day (aligned with grid columns) */}
-        <View style={styles.daysHeaderActual}>
-          {days.map((day, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.dayButton,
-                selectedDay === index && styles.selectedDay,
-                // Remove right border for the last button
-                index === days.length - 1 && { borderRightWidth: 0 }
-              ]}
-              onPress={() => setSelectedDay(index)}
-            >
-              <Text style={[
-                styles.dayText,
-                selectedDay === index && styles.selectedDayText
-              ]}>
-                {day}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </View>
-
-      {/* --- Scrollable Grid Content --- */}
-      <ScrollView style={styles.scheduleContainer}>
-        {periods.map((period, periodIndex) => (
-          <View key={periodIndex} style={styles.periodRow}>
-            {/* Column for period number and times */}
-            <View style={styles.timeColumn}>
-              {/* Display start time for EVERY period */}
-              <Text style={styles.startTimeLabel}>{period.startTime}</Text>
-              <View style={styles.periodCircle}>
-                <Text style={styles.periodNumber}>{period.num}</Text>
-              </View>
-              {/* Display end time for EVERY period */}
-              <Text style={styles.endTimeLabel}>{period.endTime}</Text>
-            </View>
-
-            {/* Row containing cells for each day in this period */}
-            <View style={styles.dayGridRow}>
-              {days.map((day, dayIndex) => (
-                <View
-                  key={dayIndex}
-                  style={[
-                    styles.classCell,
-                    selectedDay === dayIndex && styles.selectedDayCell,
-                    // Remove right border for the last cell in the row
-                    dayIndex === days.length - 1 && { borderRightWidth: 0 }
-                  ]}
-                >
-                  {/* Content of the class cell (e.g., class name) goes here */}
-                  {/* Example: <Text>Class Info</Text> */}
-                </View>
-              ))}
-            </View>
+      {/* New wrapper to group timetable elements for centering */}
+      <View style={styles.timetableWrapper}>
+        {/* --- Header Row --- */}
+        <View style={styles.timetableHeaderContainer}>
+          {/* Top-Left Empty Corner (aligns with time column) */}
+          <View style={styles.topLeftCorner} />
+          {/* Header for selecting the day (aligned with grid columns) */}
+          <View style={styles.daysHeaderActual}>
+            {days.map((day, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.dayButton,
+                  selectedDay === index && styles.selectedDay,
+                  // Remove right border for the last button
+                  index === days.length - 1 && { borderRightWidth: 0 }
+                ]}
+                onPress={() => setSelectedDay(index)}
+              >
+                <Text style={[
+                  styles.dayText,
+                  selectedDay === index && styles.selectedDayText
+                ]}>
+                  {day}
+                </Text>
+              </TouchableOpacity>
+            ))}
           </View>
-        ))}
-      </ScrollView>
+        </View>
 
-      {/* --- Footer --- */}
-      <View style={styles.totalUnitsContainer}>
-        <Text style={styles.totalUnitsText}>合計の単位数：0</Text>
-        {/* Updated Info Button: Removed circle background */}
-        <TouchableOpacity style={styles.infoButton}>
-          <Text style={styles.infoButtonText}>{ICONS.info}</Text>
-        </TouchableOpacity>
-      </View>
+        {/* --- Scrollable Grid Content --- */}
+        <ScrollView style={styles.scheduleContainer}>
+          {periods.map((period, periodIndex) => (
+            <View key={periodIndex} style={styles.periodRow}>
+              {/* Column for period number and times */}
+              <View style={styles.timeColumn}>
+                <Text style={styles.startTimeLabel}>{period.startTime}</Text>
+                <View style={styles.periodCircle}>
+                  <Text style={styles.periodNumber}>{period.num}</Text>
+                </View>
+                <Text style={styles.endTimeLabel}>{period.endTime}</Text>
+              </View>
+              {/* Row containing cells for each day in this period */}
+              <View style={styles.dayGridRow}>
+                {days.map((day, dayIndex) => (
+                  // Ensure no stray text is accidentally placed inside this View
+                  <View
+                    key={dayIndex}
+                    style={[
+                      styles.classCell,
+                      selectedDay === dayIndex && styles.selectedDayCell,
+                      // Remove right border for the last cell in the row
+                      dayIndex === days.length - 1 && { borderRightWidth: 0 }
+                    ]}
+                  >
+                    {/* Content of the class cell (e.g., class name) goes here */}
+                    {/* Example: <Text>Class Info</Text> */}
+                    {/* Make sure there's no accidental text here */}
+                  </View>
+                ))}
+              </View>
+            </View>
+          ))}
+        </ScrollView>
+
+        {/* --- Footer --- */}
+        <View style={styles.totalUnitsContainer}>
+          <Text style={styles.totalUnitsText}>合計の単位数：0</Text>
+          <TouchableOpacity style={styles.infoButton}>
+            <Text style={styles.infoButtonText}>{ICONS.info}</Text>
+          </TouchableOpacity>
+        </View>
+      </View> {/* End of timetableWrapper */}
 
       {/* --- Floating Action Button --- */}
       <TouchableOpacity style={styles.addButton}>
@@ -260,7 +262,7 @@ const BusScreen = () => (
 );
 
 /**
- * MapScreen Component - RESTORED (Ensure dependencies are fixed!)
+ * MapScreen Component - RESTORED (Ensure dependencies are fixed first!)
  * Displays an interactive map with user location and markers.
  */
 const MapScreen = () => {
@@ -739,14 +741,21 @@ const styles = StyleSheet.create({
   screenContainer: {
     flex: 1,
     backgroundColor: COLORS.white,
+    justifyContent: 'center', // Center content vertically
+    // alignItems: 'center', // Let wrapper handle width/horizontal alignment
   },
   // --- Timetable Screen Styles ---
+  timetableWrapper: { // New style for the wrapper view
+    width: '100%', // Ensure wrapper takes full width
+    // Let height be determined by content
+  },
   timetableHeaderContainer: {
     flexDirection: 'row',
     height: 40,
     backgroundColor: COLORS.white,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.gray,
+    // Removed marginTop: 20
   },
   topLeftCorner: {
     width: 60, // Reduced width
@@ -777,7 +786,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   scheduleContainer: {
-    flex: 1,
+    // Removed flex: 1
+    // Let ScrollView determine its height based on content, up to available space
   },
   periodRow: {
     flexDirection: 'row',
